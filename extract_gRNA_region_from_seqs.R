@@ -21,7 +21,7 @@ alignSeqToPatternAndReturnAlignedRegion <- function(my_pattern, my_seq, flankSeq
  return(alignRegion)
  }
 
-seqs_dist_fn <- paste0(sample_id, '_amplicon_abundance_table_w_primer_ids.tsv')
+seqs_dist_fn <- paste0('amplicon_abundance_table_w_primer_ids.tsv')
 grna_seqs_fn <- 'gRNA_sequences.tsv'
 seqs_dist_tab <- read.table(seqs_dist_fn, sep = "\t", quote = "", stringsAsFactors = F, head = T)
 colnames(seqs_dist_tab) <- c('count', 'seq', 'amplicon_id')
@@ -67,5 +67,5 @@ my_gRNA_Aligned_Regions <- apply(alignmanets2make_table, 1 ,function(x) {
 my_gRNA_Aligned_Regions <- unname(unlist(my_gRNA_Aligned_Regions))
 print(my_gRNA_Aligned_Regions)
 alignmanets2make_table$gRNA_region_seq <- my_gRNA_Aligned_Regions
-write.table(alignmanets2make_table, paste0('ampliconDistribution_w_gRNA_region_seq_flank_', flank_len,'.csv'), sep = "\t", quote = F, col.names = T, row.names = F)
+write.table(alignmanets2make_table, paste0('ampliconDistribution_w_gRNA_region.tsv'), sep = "\t", quote = F, col.names = T, row.names = F)
 
