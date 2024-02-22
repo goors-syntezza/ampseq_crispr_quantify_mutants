@@ -5,7 +5,7 @@ library(forcats)
 library(rlist)
 
 args = commandArgs(trailingOnly=TRUE)
-
+metadata_dir <- '../00.Metadata/'
 if (length(args) != 1) {print("Error: please provide sample_id!");stop(1)}
 sample_id = args[1]
 if (sample_id != 'wt') wt_grna_region_seqs_df <- read.table('../wt/wild_type_ref_grna_region_seqs.tsv', sep = "\t", quote = "", head = T, stringsAsFactors = F)
@@ -31,7 +31,7 @@ is_grna_in_wt <- function(grna_region_seq, amplicon_id, grna_id) {
 seqs_dist_fn <- paste0('ampliconDistribution_w_gRNA_region.tsv')
 seqs_dist_tab <- read.table(seqs_dist_fn, sep = "\t", quote = "", stringsAsFactors = F, head = T)
 
-wt_grnas_per_exon_fn <- 'amplicon_ref_seqs.tsv'
+wt_grnas_per_exon_fn <- paste0(metadata_dir, 'amplicon_sequences.tsv')
 wt_grnas_per_exon_tab <- read.table(wt_grnas_per_exon_fn, sep = "\t", quote = "", stringsAsFactors = F, head = T)
 
 is_mutated <- apply(seqs_dist_tab, 1, function(x) {

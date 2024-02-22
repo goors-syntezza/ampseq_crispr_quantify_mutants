@@ -5,6 +5,8 @@ library(forcats)
 library(rlist)
 library(Biostrings)
 
+metadata_dir <- '../00.Metadata/'
+
 args = commandArgs(trailingOnly=TRUE)
 if (length(args) != 3) {print("Error: please provide sample_id, min_seq_depth and flank_len parameters!");stop(1)}
 sample_id = args[1]
@@ -22,7 +24,7 @@ alignSeqToPatternAndReturnAlignedRegion <- function(my_pattern, my_seq, flankSeq
  }
 
 seqs_dist_fn <- paste0('amplicon_abundance_table_w_primer_ids.tsv')
-grna_seqs_fn <- 'gRNA_sequences.tsv'
+grna_seqs_fn <- paste0(metadata_dir, 'grna_sequences.tsv')
 seqs_dist_tab <- read.table(seqs_dist_fn, sep = "\t", quote = "", stringsAsFactors = F, head = T)
 colnames(seqs_dist_tab) <- c('count', 'seq', 'amplicon_id')
 seqs_dist_tab <- seqs_dist_tab[seqs_dist_tab$count >= min_seq_depth, ]
@@ -40,7 +42,7 @@ amplicon_ids <- seqs_dist_tab[, 'amplicon_id']
 alignmanets2make_table <- lapply(seq_indices, function(x) {
  seq_index <- x
  seq_amplicon_id <- seqs_dist_tab[x, 'amplicon_id']
- seq_grnas <- grna_seqs_tab[grna_seqs_tab$amplicon_id == seq_amplicon_id, c('gRNA_id', 'seq'), drop = F]
+ seq_grnas <- grna_seqs_tab[grna_seqs_tab$amplicon_id == seq_amplicon_id, c('grna_id', 'grna_seq'), drop = F]
  colnames(seq_grnas) <- c('gRNA_id', 'gRNA_seq')
  seq_grnas$seq_id <- x
  seq_grnas$amplicon_id <- seq_amplicon_id
