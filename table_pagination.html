@@ -1,0 +1,99 @@
+<script type="text/javascript">
+            var pageSize_uniqueid = 15;    //number of records displayed per page
+            var curpage_uniqueid=0;        //current page
+            var lastpage_uniqueid;        //last page
+            var direct_uniqueid=0;        //direction
+            var len_uniqueid;            //total number of rows
+            var page_uniqueid;           //total pages
+            var begin_uniqueid;
+            var end_uniqueid;
+
+            $(document).ready(function display_uniqueid(){
+                len_uniqueid =$("#mytable_uniqueid tr").length - 1;    // Find the total number of rows in this table，remove the first line of introduction
+                page_uniqueid=len_uniqueid % pageSize_uniqueid==0 ? len_uniqueid/pageSize_uniqueid : Math.floor(len_uniqueid/pageSize_uniqueid)+1;//According to the number of records，count pages
+                // alert("page==="+page);
+                curpage_uniqueid=1;    // Set current as the first page
+                displaypage_uniqueid(1);//show first page
+                document.getElementById("btn0_uniqueid").innerHTML="Current: " + curpage_uniqueid + "/" + page_uniqueid + " page | ";    // Show how many pages are currently
+                document.getElementById("sjzl_uniqueid").innerHTML="Total items: " + len_uniqueid + "";        // Display data volume
+
+                $("#btn1_uniqueid").click(function firstpage_uniqueid(){    // front page
+                    curpage_uniqueid=1;
+                    direct_uniqueid = 0;
+                    displaypage_uniqueid();
+                });
+                $("#btn2_uniqueid").click(function frontpage_uniqueid(){    // previous page
+                    direct_uniqueid=-1;
+                    displaypage_uniqueid();
+                });
+                $("#btn3_uniqueid").click(function nextpage_uniqueid(){    // next page
+                    direct_uniqueid=1;
+                    displaypage_uniqueid();
+                });
+                $("#btn4_uniqueid").click(function lastpage_uniqueid(){    // last page
+                    curpage_uniqueid=page_uniqueid;
+                    direct_uniqueid = 0;
+                    displaypage_uniqueid();
+                });
+                $("#btn5_uniqueid").click(function changepage_uniqueid(){    // turn page
+                    curpage_uniqueid=document.getElementById("changePage_uniqueid").value * 1;
+                    if (!/^[1-9]\d*$/.test(curpage_uniqueid)) {
+                        alert("Please enter a positive integer");
+                        return ;
+                    }
+                    if (curpage_uniqueid > page_uniqueid) {
+                        alert("Beyond the data page");
+                        return ;
+                    }
+                    direct_uniqueid = 0;
+                    displaypage_uniqueid();
+                });
+
+
+                $("#pageSizeSet_uniqueid").click(function setpageSize_uniqueid(){    // Set how many records to display per page
+                    pageSize_uniqueid = document.getElementById("pageSize_uniqueid").value;    //Number of records displayed per page
+                    if (!/^[1-9]\d*$/.test(pageSize)) {
+                        alert("Please enter a positive integer");
+                        return ;
+                    }
+                    len_uniqueid = $("#mytable_uniqueid tr").length - 1;
+                    page_uniqueid = len_uniqueid % pageSize_uniqueid==0 ? len_uniqueid/pageSize_uniqueid : Math.floor(len_uniqueid/pageSize_uniqueid)+1;//According to the number of records，count pages
+                    curpage_uniqueid=1;        //current page
+                    direct_uniqueid=0;        //direction
+                    firstpage_uniqueid();
+                });
+            });
+
+            function displaypage_uniqueid(){
+                if(curpage_uniqueid <=1 && direct_uniqueid==-1){
+                    direct_uniqueid=0;
+                    alert("Already the first page !!!");
+                    return;
+                } else if (curpage_uniqueid >= page_uniqueid && direct_uniqueid==1) {
+                    direct_uniqueid=0;
+                    alert("Already the last page !!!");
+                    return ;
+                }
+                lastpage_uniqueid = curpage_uniqueid;
+
+                // fix when len=1 time，The bug that curPage calculates to 0
+                if (len_uniqueid > pageSize_uniqueid) {
+                    curpage_uniqueid = ((curpage_uniqueid + direct_uniqueid + len_uniqueid) % len_uniqueid);
+                } else {
+                    curpage_uniqueid = 1;
+                }
+                document.getElementById("btn0_uniqueid").innerHTML="Current: " + curpage_uniqueid + "/" + page_uniqueid + " page  | ";        // Show how many pages are currently
+
+                begin_uniqueid=(curpage_uniqueid-1)*pageSize_uniqueid + 1;// start record number
+                end_uniqueid = begin_uniqueid + 1*pageSize_uniqueid - 1;    // end record number
+
+
+                if(end_uniqueid > len_uniqueid ) end_uniqueid=len_uniqueid;
+                $("#mytable_uniqueid tr").hide();    // First，set this behavior to hide
+                $("#mytable_uniqueid tr").each(function(i){    // Then，determine whether the line is restored to display through conditional judgment
+                    if((i>=begin_uniqueid && i<=end_uniqueid) || i==0 )//show begin<=x<=end record
+                        $(this).show();
+                });
+
+             }
+</script>

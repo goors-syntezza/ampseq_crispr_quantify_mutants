@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html>   
+
+<head>
+<link rel="icon" href="src/images/icon.ico" type="image/x-icons">
+<title>Syntezza Analysis Report</title>
+<link rel="stylesheet" href="src/css/jquery-ui.css" />
+<link rel="stylesheet" href="src/css/bootstrap-4.3.1.min.css" />
+<link rel="stylesheet" href="src/css/jquery.tocify.css" />
+<link rel="stylesheet" href="src/css/style.css"/>
+<link rel="stylesheet" href="src/css/base.css"/>
+<link rel="stylesheet" href="src/css/gallery.css"/>
+<script src="src/js/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script src="src/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="src/js/jquery.tocify.min.js" type="text/javascript"></script>
+<script src="src/js/bootstrap-4.3.1.min.js" type="text/javascript"></script>
+<script src="src/js/scrollTop.js" type="text/javascript"></script>
+<script type="text/javascript">
+	$(function () {
+		var options = {
+			selectors: "h2,h3,h4,h5",
+			theme: "bootstrap",
+			scrollTo: "60"
+		};
+		var toc = $("#toc").tocify(options).data("toc-tocify");
+	});
+</script>
+
+
+<script type="text/javascript">
+function trans(img_div_id) {
+img_div = $("#" + img_div_id)
+img = $("#" + img_div_id + " img").first();
+if (img_div.hasClass("fullscreen-div")) {
+img_div.removeClass("fullscreen-div");
+img.removeClass("fullscreen-img");
+}
+else {
+img_div.addClass("fullscreen-div");
+img.addClass("fullscreen-img");
+}
+}
+function filter_display() {
+return $(this).css("display") != "none";
+}
+function show_default() {
+var list_group_id = "#" + $(this).attr("id");
+if ($(list_group_id + " a.active").css("display") == "none") {
+var list_tab = $(list_group_id + " a.active");
+var pan_id = list_tab.attr("href");
+$(pan_id).removeClass("active show");
+list_tab.removeClass("active");
+}
+if ($(list_group_id + " a.active").filter(filter_display).length == 0) {
+$(list_group_id + " a").filter(filter_display).first().tab("show");
+}
+}
+$.fn.show_default = show_default
+function next(botton_id) {
+var present_tab = $("#" + botton_id.replace("_button_next", "_list-tab") + " .active").first();
+while (present_tab.next().length == 1) {
+if (present_tab.next().css("display") != "none") {
+present_tab.next().tab("show");
+break;
+}
+else {
+present_tab = present_tab.next();
+}
+}
+}
+function prev(botton_id) {
+var present_tab = $("#" + botton_id.replace("_button_prev", "_list-tab") + " .active").first();
+while (present_tab.prev().length == 1) {
+if (present_tab.prev().css("display") != "none") {
+present_tab.prev().tab("show");
+break;
+}
+else {
+present_tab = present_tab.prev();
+}
+}
+}
+$(document).ready(function () {
+$(".form-control").on("keyup", function () {
+var value = $(this).val().toLowerCase();
+var input_box_id = "#" + $(this).attr("id");
+var list_group_id = input_box_id.replace("_InputList", "_list-tab");
+$(list_group_id + " a").filter(function () {
+$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+});
+$(list_group_id).show_default();
+});
+$(".list-group").each(show_default);
+});
+</script>
+
+
+
+
+</head>
+
+
+<body>  
+
+<div id="toc" class="tocify">
+</div>
+	<div style="position:fixed; top:0; left:0; width:100%; z-index:1000;">
+		<table width="100%" height="50px" border="0" cellpadding="0" cellspacing="0"
+			style="background:#F3F3F3; border-bottom:1px solid #eee;border-top: none;background-image:-moz-linear-gradient(top,#EEEEEE,#FFFFFF); background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0,#EEEEEE), color-stop(1,#FFFFFF));filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#EEEEEE', endColorstr='#FFFFFF', GradientType='0')">
+			<tr height="86%">
+				<td width='1%'></td>
+				<td><img src="src/images/Syntezza-NGS-logo2.png"></td>
+				<td><div style="margin:5px;border-left:1px solid #DCDCDC;height:30px"></div></td>
+				<td width="82%"></td>
+			</tr>
+		</table>
+	</div>
+</div>  
+
+<!--------------------------header---------------------------------->
+<div id="main">
+<br><h1>Syntezza pipeline for CRISPR induced mutations identification and quantification for NGS data</h1></br>
+<b>Project name: INJECTABLE_NAME[place_project_name]INJECTABLE_NAME</b></br>
+<b>INJECTABLE_NAME[place_date]INJECTABLE_NAME</b>
+<br /><br />
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [Overview]---------------------------------->
+
+<h2>[ChapterNumber] Overview</h2>
+
+    <p class="paragraph">CRISPR technology allows one to induce mutations in a given target site. When the target areas are amplified using amplicon sequencing, one can efficiently examine the target areas and analyze them bioinformatically in order to identify mutations and quantify them.
+	</p>
+
+        <br />
+
+        <br />
+
+        <br />
+
+<h3>[ChapterNumber].1 Computational Analysis Workflow</h3>
+
+    <p class="paragraph">Quality filtered amplicon sequencing reads were stitched together using NGmerge. Primer sequences within each read were used to assign it to a reference amplicon. Once assigned to a reference amplicon, the reads is aligned against the relevant gRNA sequences. The aligned region (along with flanking bases) is checked against the sequences within a reference wild-type sample, and according to this check is deemed either mutated or unmutated.
+	</p>
+
+
+        <br />
+
+        <br />
+
+        <br />
+		
+
+<p class="head"><img class="logo" align="right" src="src/images/syntezza-logo.png"/>
+<hr/><h6 style="color:grey;text-align:right;font-size:0.8em">Syntezza Bioscience Ltd.</h6>
+</p><br/>
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [run_parameters]---------------------------------->
+
+<h2>[ChapterNumber] Run parameters</h2>
+        
+    <p class="paragraph">The table below details the run parameters for the given project:
+	</p> 
+
+<!--------------------------Add as-is table here [path(can be with * - in case of multiple files the first will be written )]: [/analysis_settings.tsv]---------------------------------->
+
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [insert_seqs_statistics]---------------------------------->
+
+<h2>[ChapterNumber] Primer information</h2>
+        
+    <p class="paragraph">The table below details the sequences used to identify the different amplicons. The table is available under the file: primer_sequences.tsv.
+	</p> 
+
+<!--------------------------Add as-is table here [path(can be with * - in case of multiple files the first will be written )]: [/primer_sequences.tsv]---------------------------------->
+
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [insert_seqs_count]---------------------------------->
+
+<h2>[ChapterNumber] Expected gRNA sequences</h2>
+        
+    <p class="paragraph">The table below details expected gRNA sequences within each amplicon. The table is available under the file grna_sequences.tsv
+	</p> 
+
+<!--------------------------Add as-is table here [path(can be with * - in case of multiple files the first will be written )]: [/grna_sequences.tsv]---------------------------------->
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [insert_seqs_count]---------------------------------->
+
+<h2>[ChapterNumber] Reads merging statistics</h2>
+        
+    <p class="paragraph">The table below details R1 and R2 merge statistics for each sample. The table is available under the file reads_merge_statistics.tsv
+	</p> 
+
+<!--------------------------Add as-is table here [path(can be with * - in case of multiple files the first will be written )]: [/reads_merge_statistics.tsv]---------------------------------->
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [insert_seqs_count]---------------------------------->
+
+<h3>[ChapterNumber] Reads amplicon distribution per sample</h3>
+
+    <p class="paragraph">The figures below display, for each sample, the count of reads that were assigned to each reference amplicon sequence.
+        </p>
+
+<!--------------------------Add boxSelect section here [directory,prefix,suffix]: [plots/,primers_dist_,.png]--------------------------------->
+
+
+        <br />
+
+        <br />
+
+        <br />
+
+
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [insert_seqs_count]---------------------------------->
+
+<h2>[ChapterNumber] Sequences tables</h2>
+        
+    <p class="paragraph">The table below list what sequences were identified within each sample and for each reference amplicon sequence. If a given reference amplicon sequence contains more than one gRNAs, a separate line for each such case is produced. The full table can be found in the file: ampliconDistribution_w_gRNA_region_and_mutation_status_all.tsv
+	</p> 
+
+<!--------------------------Add as-is table here [path(can be with * - in case of multiple files the first will be written )]: [/ampliconDistribution_w_gRNA_region_and_mutation_status_all_head.tsv]---------------------------------->
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [insert_seqs_count]---------------------------------->
+
+<h2>[ChapterNumber] Mutations rates per reference amplicon sequence and gRNA</h2>
+        
+    <p class="paragraph">The information regarding the count of wild-type reads and mutated reads, for each gRNA in each reference amplicon sequence and its gRNAs, is detailed below. The table can be found in the file: grna_mutation_rates_and_counts_per_amplicon_all_samples_all.tsv 
+	</p> 
+
+<!--------------------------Add as-is table here [path(can be with * - in case of multiple files the first will be written )]: [/grna_mutation_rates_and_counts_per_amplicon_all_samples_all.tsv]---------------------------------->
+
+
+
+<!--------------------------Add chapter here [chapter_id(better be alphanumeric without spaces)]: [insert_seqs_dist_plot]---------------------------------->
+
+
+<h2>[ChapterNumber] Mutation rates plot</h2>
+
+<p class="center">
+<img src="mutation_rate_and_reads_count_per_sample_and_exon_pie_lattice_based_on_intact_gRNA_region_only_mutated_samples.png" width="600" height="600" />
+        
+<p class="name_fig"><strong>Fig [ChapterNumber].1 Violin plot representing the distribution of the different insert sequences along samples</strong></p>  
+</p>
+
+
+</p><br/>
+
+<p class="head"><img class="logo" align="right" src="src/images/syntezza-logo.png"/>
+<hr/><h6 style="color:grey;text-align:right;font-size:0.8em">Syntezza Bioscience Ltd.</h6>
+</p><br/>
