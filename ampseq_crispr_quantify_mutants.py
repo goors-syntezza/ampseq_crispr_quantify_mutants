@@ -248,6 +248,11 @@ def analyze_individual_sample(sample_id, fq1, fq2, minseqdepth, flank_len):
   if (sample_id == 'wt'):
     produce_ref_grna_region_seqs_from_wt_sample()
 
+def produce_amp_seqs_dist_table_all_samples():
+  print_log_style('Producing amplicon sequences distribution table for all samples..')
+  cmd = ' cat ampliconDistribution_w_gRNA_region_and_mutation_status_all.tsv|cut -f3,4,5,6,7 > amp_aonly_bundance_table_all_samples_unsorted.tsv && head -n1 amp_aonly_bundance_table_all_samples_unsorted.tsv > amp_aonly_bundance_table_all_samples_header.tsv && tail -n+2 amp_aonly_bundance_table_all_samples_unsorted.tsv | sort -rnk5 | uniq > amp_aonly_bundance_table_all_samples_sorted.tsv && cat amp_aonly_bundance_table_all_samples_header.tsv amp_aonly_bundance_table_all_samples_sorted.tsv > amp_aonly_bundance_table_all_samples.tsv && rm amp_aonly_bundance_table_all_samples_sorted.tsv amp_aonly_bundance_table_all_samples_header.tsv amp_aonly_bundance_table_all_samples_unsorted.tsv'
+  run_single_job_and_wait(job_id = 'all', job_general_name = 'produce_amp_only_abundance_table.tsv', cmd_line = cmd)
+
 project_dir = os. getcwd()
 make_req_dirs()
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
@@ -272,3 +277,4 @@ producePercentStitchedReport(my_pipeline_settings_dict = pipeline_settings_dict)
 copy_primer_dist_image_files(my_pipeline_settings_dict = pipeline_settings_dict)
 unify_individual_samples_tables()
 visualize_mutation_rates()
+produce_amp_seqs_dist_table_all_samples()

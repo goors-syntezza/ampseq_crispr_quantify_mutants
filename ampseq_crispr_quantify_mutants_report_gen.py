@@ -418,7 +418,8 @@ def copy_results_files():
   shutil.copy('../mutation_rate_and_reads_count_per_sample_and_exon_pie_lattice_based_on_intact_gRNA_region_only_mutated_samples.png', '.')
   shutil.copytree('../plots', './plots', dirs_exist_ok = True)
   copyFileHead(sfn = 'ampliconDistribution_w_gRNA_region_and_mutation_status_all.tsv', tfn = 'ampliconDistribution_w_gRNA_region_and_mutation_status_all_head.tsv', nLines = 25)
-  
+  shutil.copy('../amp_aonly_bundance_table_all_samples.tsv', '.')
+  copyFileHead(sfn = 'amp_aonly_bundance_table_all_samples.tsv', tfn = 'amp_aonly_bundance_table_all_samples_head.tsv', nLines = 25)
   
   
 
@@ -460,6 +461,7 @@ performed_analyses_dict['run_parameters'] = 1
 performed_analyses_dict['insert_seqs_statistics'] = 1
 performed_analyses_dict['insert_seqs_count'] = 1
 performed_analyses_dict['insert_seqs_dist_plot'] = 1
+performed_analyses_dict['amp_seqs_count'] = 1
 os.chdir(report_dir)
 copy_results_files()
 
