@@ -249,6 +249,17 @@ def validate_analysis_settings_sheet_content(wb):
         print("Error:  expected 0 < min_depth_per_sequence")
         sys.exit(1)
 
+    sheet = wb.sheet_by_name('sample_seq_files')
+
+    has_wt_sample = 'No'
+
+    for row_idx in range(1, nrows):
+        sample_id = sheet.cell_value(row_idx, 0)
+        if  sample_id == 'wt':
+            has_wt_sample = 'Yes'
+            break
+
+    return has_wt_sample
 
 
 def save_table_as_csv(wb, ws_name, out_fn):
@@ -319,13 +330,14 @@ verify_rows_width(workbook, 'amplicon_sequences', 2)
 verify_rows_width(workbook, 'primers', 2)
 verify_rows_width(workbook, 'grna', 3)
 verifyLegalNamesInSheets(wb = workbook)
-validate_analysis_settings_sheet_content(wb = workbook)
+has_wt_sample = validate_analysis_settings_sheet_content(wb = workbook)
 comp_values_in_two_columns(workbook, 'amplicon_sequences', 'primers', 0, 0, 'amplicon_id')
 comp_distinct_values_in_two_columns(workbook, 'primers', 'amplicon_sequences', 0, 0, 'amplicon_id')
 
 validate_unique_values_in_range(wb = workbook, ws_name = 'sample_seq_files', cindex_1 = 1, cindex_2 = 2, error_msg = 'Error: duplicate fastq files!')
 verifySpecificValueExistsInSheetColumns(wb = workbook, sn = 'sample_seq_files', col_indices = [0], what = 'wt')
 excel_params_dict = convertTables2DictsAndWriteToFile(wb = workbook)
+excel_params_dict['analysis_settings']['has_wt_sample'] = has_wt_sample
 save_table_as_csv(wb = workbook, ws_name = 'amplicon_sequences', out_fn = metadata_dir + '/amplicon_sequences.tsv')
 save_table_as_csv(wb = workbook, ws_name = 'grna', out_fn = metadata_dir + '/grna_sequences.tsv')
 save_table_as_csv(wb = workbook, ws_name = 'primers', out_fn = metadata_dir + '/primer_sequences.tsv')

@@ -6,9 +6,10 @@ library(rlist)
 
 args = commandArgs(trailingOnly=TRUE)
 metadata_dir <- '../00.Metadata/'
-if (length(args) != 1) {print("Error: please provide sample_id!");stop(1)}
+if (length(args) != 2) {print("Error: please provide sample_id, hasWTSample {True, False}!");stop(1)}
 sample_id = args[1]
-if (sample_id != 'wt') wt_grna_region_seqs_df <- read.table('../wt/wild_type_ref_grna_region_seqs.tsv', sep = "\t", quote = "", head = T, stringsAsFactors = F)
+hasWTSample = args[2]
+if ((sample_id != 'wt') && (hasWTSample == 'True')) wt_grna_region_seqs_df <- read.table('../wt/wild_type_ref_grna_region_seqs.tsv', sep = "\t", quote = "", head = T, stringsAsFactors = F)
 
 is_grna_in_ref_seqs_provided <- function(grna_region_seq, amplicon_id) {
  exists_in_ref <- F
@@ -38,7 +39,7 @@ is_mutated <- apply(seqs_dist_tab, 1, function(x) {
  gRNA_id <- x[1]
  gRNA_region_seq <- x[8]
  amplicon_id <- x[4]
- if (sample_id == 'wt') ret_val <- !is_grna_in_ref_seqs_provided(grna_region_seq = gRNA_region_seq, amplicon_id = amplicon_id)
+ if ((sample_id == 'wt') || (hasWTSample == 'False')) ret_val <- !is_grna_in_ref_seqs_provided(grna_region_seq = gRNA_region_seq, amplicon_id = amplicon_id)
  else ret_val <- !is_grna_in_wt(grna_region_seq = gRNA_region_seq, amplicon_id = amplicon_id, grna_id = gRNA_id)
  return(ret_val)
  })

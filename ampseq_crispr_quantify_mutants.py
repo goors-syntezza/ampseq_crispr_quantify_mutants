@@ -221,9 +221,9 @@ def extract_grna_regions_from_amplicons(sample_id, minseqdepth, flank_len):
   cmd = 'Rscript ' + scripts_dir + '/extract_gRNA_region_from_seqs.R ' + sample_id + ' ' + str(minseqdepth) + ' ' + str(flank_len)
   run_single_job_and_wait(job_id = sample_id, job_general_name = 'extract_grna_regions_from_amplicons', cmd_line = cmd)
 
-def count_mutation_rates_per_sample_and_exon(sample_id):
+def count_mutation_rates_per_sample_and_exon(sample_id, has_wt_sample):
   print_log_style('About to count mutation rates for sample "' + sample_id + '"..')
-  cmd = 'Rscript ' + scripts_dir + '/count_mutation_rates_per_sample_and_exon_by_intact_gRNA_seq_presence.R' + ' ' + sample_id
+  cmd = 'Rscript ' + scripts_dir + '/count_mutation_rates_per_sample_and_exon_by_intact_gRNA_seq_presence.R' + ' ' + sample_id + ' ' + str(has_wt_sample)
   run_single_job_and_wait(job_id = sample_id, job_general_name = 'count_mutation_rates_per_sample_and_exon', cmd_line = cmd)
 
 def produce_ref_grna_region_seqs_from_wt_sample():
@@ -231,7 +231,7 @@ def produce_ref_grna_region_seqs_from_wt_sample():
   cmd = 'Rscript ' + scripts_dir + '/produce_ref_grna_region_seqs_from_wt_sample.R'
   run_single_job_and_wait(job_id = 'wt', job_general_name = 'produce_ref_grna_region_seqs_from_wt_sample', cmd_line = cmd)
 
-def analyze_individual_sample(sample_id, fq1, fq2, minseqdepth, flank_len):
+def analyze_individual_sample(sample_id, fq1, fq2, minseqdepth, flank_len, has_wt_sample):
   print_log_style('Now analyzing sample "' + sample_id + '"..')
   os.chdir(project_dir)
   os.makedirs(sample_id, exist_ok = True)
@@ -243,7 +243,7 @@ def analyze_individual_sample(sample_id, fq1, fq2, minseqdepth, flank_len):
   assign_seqs2primers_ids(inv_primers_dict, sample_id = sample_id)
   produce_primers_dist_table_and_pie_plot(sample_id = sample_id)
   extract_grna_regions_from_amplicons(sample_id = sample_id, minseqdepth = int(minseqdepth), flank_len = int(flank_len))
-  count_mutation_rates_per_sample_and_exon(sample_id = sample_id)
+  count_mutation_rates_per_sample_and_exon(sample_id = sample_id, has_wt_sample = has_wt_sample)
   cal_percent_mutated_per_grna(sample_id = sample_id)
   if (sample_id == 'wt'):
     produce_ref_grna_region_seqs_from_wt_sample()
@@ -262,7 +262,11 @@ primers_dict, inv_primers_dict = read_primers_info()
 print(pipeline_settings_dict)
 minseqdepth = pipeline_settings_dict['analysis_settings_dict']['min_depth_per_sequence']['Value']
 flank_len = pipeline_settings_dict['analysis_settings_dict']['grna_flanking_bases_count']['Value']
-analyze_individual_sample(sample_id = 'wt', fq1 = pipeline_settings_dict['sample_seq_files_dict']['wt']['r1_filename'], fq2 = pipeline_settings_dict['sample_seq_files_dict']['wt']['r2_filename'], minseqdepth = minseqdepth, flank_len = flank_len)
+if 'wt' in  pipeline_settings_dict['sample_seq_files_dict'].keys():
+    has_wt_sample = True
+    analyze_individual_sample(sample_id = 'wt', fq1 = pipeline_settings_dict['sample_seq_files_dict']['wt']['r1_filename'], fq2 = pipeline_settings_dict['sample_seq_files_dict']['wt']['r2_filename'], minseqdepth = minseqdepth, flank_len = flank_len, has_wt_sample = has_wt_sample)
+else:
+    has_wt_sample = False
 
 for sample_id in pipeline_settings_dict['sample_seq_files_dict'].keys():
   if (sample_id == 'wt'):
@@ -270,7 +274,7 @@ for sample_id in pipeline_settings_dict['sample_seq_files_dict'].keys():
   print(sample_id)
   fq1fn = pipeline_settings_dict['sample_seq_files_dict'][sample_id]['r1_filename']
   fq2fn = pipeline_settings_dict['sample_seq_files_dict'][sample_id]['r2_filename']
-  analyze_individual_sample(sample_id = sample_id, fq1 = fq1fn, fq2 = fq2fn, minseqdepth = minseqdepth, flank_len = flank_len)
+  analyze_individual_sample(sample_id = sample_id, fq1 = fq1fn, fq2 = fq2fn, minseqdepth = minseqdepth, flank_len = flank_len, has_wt_sample = has_wt_sample)
 
 os.chdir(project_dir)
 producePercentStitchedReport(my_pipeline_settings_dict = pipeline_settings_dict)
