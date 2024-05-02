@@ -252,7 +252,7 @@ def validate_analysis_settings_sheet_content(wb):
     sheet = wb.sheet_by_name('sample_seq_files')
 
     has_wt_sample = 'No'
-
+    nrows = sheet.nrows
     for row_idx in range(1, nrows):
         sample_id = sheet.cell_value(row_idx, 0)
         if  sample_id == 'wt':
@@ -335,9 +335,10 @@ comp_values_in_two_columns(workbook, 'amplicon_sequences', 'primers', 0, 0, 'amp
 comp_distinct_values_in_two_columns(workbook, 'primers', 'amplicon_sequences', 0, 0, 'amplicon_id')
 
 validate_unique_values_in_range(wb = workbook, ws_name = 'sample_seq_files', cindex_1 = 1, cindex_2 = 2, error_msg = 'Error: duplicate fastq files!')
-verifySpecificValueExistsInSheetColumns(wb = workbook, sn = 'sample_seq_files', col_indices = [0], what = 'wt')
+#verifySpecificValueExistsInSheetColumns(wb = workbook, sn = 'sample_seq_files', col_indices = [0], what = 'wt')
 excel_params_dict = convertTables2DictsAndWriteToFile(wb = workbook)
-excel_params_dict['analysis_settings']['has_wt_sample'] = has_wt_sample
+#print(excel_params_dict)
+excel_params_dict['analysis_settings_dict']['has_wt_sample'] = {'Value' : has_wt_sample}
 save_table_as_csv(wb = workbook, ws_name = 'amplicon_sequences', out_fn = metadata_dir + '/amplicon_sequences.tsv')
 save_table_as_csv(wb = workbook, ws_name = 'grna', out_fn = metadata_dir + '/grna_sequences.tsv')
 save_table_as_csv(wb = workbook, ws_name = 'primers', out_fn = metadata_dir + '/primer_sequences.tsv')
