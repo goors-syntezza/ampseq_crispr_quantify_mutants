@@ -231,22 +231,30 @@ def produce_ref_grna_region_seqs_from_wt_sample():
   cmd = 'Rscript ' + scripts_dir + '/produce_ref_grna_region_seqs_from_wt_sample.R'
   run_single_job_and_wait(job_id = 'wt', job_general_name = 'produce_ref_grna_region_seqs_from_wt_sample', cmd_line = cmd)
 
+def produce_bases_dist_per_position(sid):
+  print_log_style('About to produce gRNA bases distribution per position..')
+  cmd = 'Rscript ' + scripts_dir + '/producePerBaseNuclDist.R' + ' ' + sid
+  run_single_job_and_wait(job_id = sid, job_general_name = 'produce_gRNA_bases_distribution_per_position', cmd_line = cmd)
+
+
 def analyze_individual_sample(sample_id, fq1, fq2, minseqdepth, flank_len, has_wt_sample):
   print_log_style('Now analyzing sample "' + sample_id + '"..')
   os.chdir(project_dir)
   os.makedirs(sample_id, exist_ok = True)
   os.chdir(sample_id)
   os.makedirs('log', exist_ok = True)
-  fix_mgi_fastq_headers(sample_id = sample_id, fq1fn = fq1, fq2fn = fq2)
-  merge_r1_r2_reads(sample_id = sample_id)
-  produce_initial_amp_abundance_table(sample_id = sample_id)
-  assign_seqs2primers_ids(inv_primers_dict, sample_id = sample_id)
-  produce_primers_dist_table_and_pie_plot(sample_id = sample_id)
-  extract_grna_regions_from_amplicons(sample_id = sample_id, minseqdepth = int(minseqdepth), flank_len = int(flank_len))
-  count_mutation_rates_per_sample_and_exon(sample_id = sample_id, has_wt_sample = has_wt_sample)
-  cal_percent_mutated_per_grna(sample_id = sample_id)
+  #fix_mgi_fastq_headers(sample_id = sample_id, fq1fn = fq1, fq2fn = fq2)
+  #merge_r1_r2_reads(sample_id = sample_id)
+  #produce_initial_amp_abundance_table(sample_id = sample_id)
+  #assign_seqs2primers_ids(inv_primers_dict, sample_id = sample_id)
+  #produce_primers_dist_table_and_pie_plot(sample_id = sample_id)
+  #extract_grna_regions_from_amplicons(sample_id = sample_id, minseqdepth = int(minseqdepth), flank_len = int(flank_len))
+  #count_mutation_rates_per_sample_and_exon(sample_id = sample_id, has_wt_sample = has_wt_sample)
+  #cal_percent_mutated_per_grna(sample_id = sample_id)
   if (sample_id == 'wt'):
     produce_ref_grna_region_seqs_from_wt_sample()
+  else:
+    produce_bases_dist_per_position(sample_id)
 
 def produce_amp_seqs_dist_table_all_samples():
   print_log_style('Producing amplicon sequences distribution table for all samples..')
@@ -277,8 +285,8 @@ for sample_id in pipeline_settings_dict['sample_seq_files_dict'].keys():
   analyze_individual_sample(sample_id = sample_id, fq1 = fq1fn, fq2 = fq2fn, minseqdepth = minseqdepth, flank_len = flank_len, has_wt_sample = has_wt_sample)
 
 os.chdir(project_dir)
-producePercentStitchedReport(my_pipeline_settings_dict = pipeline_settings_dict)
-copy_primer_dist_image_files(my_pipeline_settings_dict = pipeline_settings_dict)
-unify_individual_samples_tables()
+#producePercentStitchedReport(my_pipeline_settings_dict = pipeline_settings_dict)
+#copy_primer_dist_image_files(my_pipeline_settings_dict = pipeline_settings_dict)
+#unify_individual_samples_tables()
 visualize_mutation_rates()
 produce_amp_seqs_dist_table_all_samples()

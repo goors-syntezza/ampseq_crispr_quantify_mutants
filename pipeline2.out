@@ -1,0 +1,4 @@
+05/05/2024 11:31:28|Running analysis_settings_file_reader.py..
+05/05/2024 11:31:28|Command: "/home/goors/Scripts/ampseq_crispr_quantify_mutants/analysis_settings_file_reader.py"
+05/05/2024 11:31:28|analysis_settings_file_reader.py finished with exit code: 1
+05/05/2024 11:31:28|Error: analysis_settings_file_reader.py program returned a non-zero exit code!

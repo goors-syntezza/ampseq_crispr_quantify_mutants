@@ -421,6 +421,9 @@ def copy_results_files():
   shutil.copy('../amp_aonly_bundance_table_all_samples.tsv', '.')
   copyFileHead(sfn = 'amp_aonly_bundance_table_all_samples.tsv', tfn = 'amp_aonly_bundance_table_all_samples_head.tsv', nLines = 25)
   
+  for file in glob.glob(r'../*/*gRNAbaseCountPerPosition*.tsv'):
+    shutil.copy(file, '.')
+  
   
 
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
@@ -462,6 +465,7 @@ performed_analyses_dict['insert_seqs_statistics'] = 1
 performed_analyses_dict['insert_seqs_count'] = 1
 performed_analyses_dict['insert_seqs_dist_plot'] = 1
 performed_analyses_dict['amp_seqs_count'] = 1
+performed_analyses_dict['bases_dist_per_pos'] = 1
 os.chdir(report_dir)
 copy_results_files()
 

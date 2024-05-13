@@ -1,5 +1,10 @@
 #!/usr/bin/Rscript
 
+args = commandArgs(trailingOnly=TRUE)
+if (length(args) != 1) {print("Error: please provide sample_id parameter!");stop(1)}
+sample_id = args[1]
+
+
 gRNAalignmentsAndCount <- read.table('ampliconDistribution_w_gRNA_region_and_mutation_status.tsv', head = T, sep = "\t", quote = "", stringsAsFactors = F)
 
 AmpGRNaCombs <- gRNAalignmentsAndCount[, c('amplicon_id', 'gRNA_id')]
@@ -41,7 +46,10 @@ for (i in 1 : nrow(AmpGRNaCombs)) {
   for (curr_base in c('A', 'C', 'T', 'G', 'N', 'Del')) basesCountMatPercent[l, curr_base] <- basesCountMatPercent[l, curr_base] / total_count * 100
   }
  
- print(basesCountMat)
- print(basesCountMatPercent)
- 
+ #print(basesCountMat)
+ #print(basesCountMatPercent)
+ basesCountMat$Pos <- 1:nrow(print(basesCountMat))
+ basesCountMatPercent$Pos <- 1:nrow(print(basesCountMatPercent))
+ write.table(basesCountMat, file = paste0('gRNAbaseCountPerPosition_', curr_amp_id ,'_', curr_grna_id, '_', sample_id, '.tsv'), sep = "\t", quote = F, col.names = T, row.names = F)
+ write.table(basesCountMatPercent, file = paste0('gRNAbasePercentPerPosition_', curr_amp_id ,'_', curr_grna_id, '_', sample_id, '.tsv'), sep = "\t", quote = F, col.names = T, row.names = F)
  }
