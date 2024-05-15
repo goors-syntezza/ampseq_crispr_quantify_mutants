@@ -237,6 +237,12 @@ def produce_bases_dist_per_position(sid):
   run_single_job_and_wait(job_id = sid, job_general_name = 'produce_gRNA_bases_distribution_per_position', cmd_line = cmd)
 
 
+def quantifyBasesAlongEntireAmpSequence(sid, min_count):
+  print_log_style('About to produce entire amplicon sequence bases distribution per position..')
+  cmd = 'python3 ' + scripts_dir + '/quantifyAmpSeqMutantsAndQuantBaseSubstitutions.py' + ' --sample_id ' + sid + ' --min_count ' + str(int(min_count))
+  run_single_job_and_wait(job_id = sid, job_general_name = 'produce_ampseq_bases_distribution_per_position', cmd_line = cmd)
+  
+
 def analyze_individual_sample(sample_id, fq1, fq2, minseqdepth, flank_len, has_wt_sample):
   print_log_style('Now analyzing sample "' + sample_id + '"..')
   os.chdir(project_dir)
@@ -251,6 +257,8 @@ def analyze_individual_sample(sample_id, fq1, fq2, minseqdepth, flank_len, has_w
   #extract_grna_regions_from_amplicons(sample_id = sample_id, minseqdepth = int(minseqdepth), flank_len = int(flank_len))
   #count_mutation_rates_per_sample_and_exon(sample_id = sample_id, has_wt_sample = has_wt_sample)
   #cal_percent_mutated_per_grna(sample_id = sample_id)
+  quantifyBasesAlongEntireAmpSequence(sid = sample_id, min_count = minseqdepth)
+  
   if (sample_id == 'wt'):
     produce_ref_grna_region_seqs_from_wt_sample()
   else:
@@ -284,9 +292,11 @@ for sample_id in pipeline_settings_dict['sample_seq_files_dict'].keys():
   fq2fn = pipeline_settings_dict['sample_seq_files_dict'][sample_id]['r2_filename']
   analyze_individual_sample(sample_id = sample_id, fq1 = fq1fn, fq2 = fq2fn, minseqdepth = minseqdepth, flank_len = flank_len, has_wt_sample = has_wt_sample)
 
+
+
 os.chdir(project_dir)
 #producePercentStitchedReport(my_pipeline_settings_dict = pipeline_settings_dict)
 #copy_primer_dist_image_files(my_pipeline_settings_dict = pipeline_settings_dict)
 #unify_individual_samples_tables()
-visualize_mutation_rates()
-produce_amp_seqs_dist_table_all_samples()
+#visualize_mutation_rates()
+#produce_amp_seqs_dist_table_all_samples()

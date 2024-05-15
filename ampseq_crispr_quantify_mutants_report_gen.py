@@ -424,7 +424,21 @@ def copy_results_files():
   for file in glob.glob(r'../*/*gRNAbaseCountPerPosition*.tsv'):
     shutil.copy(file, '.')
   
+  #for file in glob.glob(r'../*/*ampseq_mutants_vs_wt_counts*.tsv'):
+   # shutil.copy(file, '.')
   
+  for file in glob.glob(r'../*/*_amp_seq_*_baseCountAlongSeq*.tsv'):
+    shutil.copy(file, '.')
+
+  #for file in glob.glob(r'../*/*_amp_seq_*_baseCountAlongSeq_percents*.tsv'):
+   # shutil.copy(file, '.')
+
+  for file in glob.glob(r'../*/*_amp_seq_*.fa*.tsv'):
+    shutil.copy(file, '.')
+
+  for file in glob.glob(r'../*/*_amp_seq_*.fa*.align'):
+    shutil.copy(file, '.')
+
 
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
 metadata_dir = '00.Metadata/'
@@ -466,6 +480,7 @@ performed_analyses_dict['insert_seqs_count'] = 1
 performed_analyses_dict['insert_seqs_dist_plot'] = 1
 performed_analyses_dict['amp_seqs_count'] = 1
 performed_analyses_dict['bases_dist_per_pos'] = 1
+performed_analyses_dict['insert_seqs_dist_plot_whole_ampseq'] = 1
 os.chdir(report_dir)
 copy_results_files()
 

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import argparse
 import subprocess
 import sys
 import csv
@@ -51,20 +52,27 @@ def produceFastaTableFrom_ampAbundTable(fn, min_count, ref_amp_seq_dict):
   ofh_dict = {}
   i = 0
   
-  
+  mutant_ampseq_count_dict = {}
   
   for line in csvreader:
     count = int(line[0])
     seq = line[1]
     seqname = line[2]
     
+    
+    
     if seqname == 'Unidentified':
       continue
       
     if count < min_count:
       continue
+      
+    
+    if not seqname in mutant_ampseq_count_dict.keys():
+      mutant_ampseq_count_dict[seqname] = {'wt_count' : 0, 'mutant_count' : 0}
+    
     i += 1
-    curr_ofn = 'amp_seq_' + seqname + '.fa'
+    curr_ofn = sid + '_amp_seq_' + seqname + '.fa'
     
     if not curr_ofn in ofh_dict:
       ofh_dict[curr_ofn] = open(curr_ofn, 'w')
@@ -72,13 +80,30 @@ def produceFastaTableFrom_ampAbundTable(fn, min_count, ref_amp_seq_dict):
       ofh_dict[curr_ofn].write('>ref_seq\t0\n' + my_ref_seq + '\n')
     
     ofh_dict[curr_ofn].write('>seq_index_' + str(i) + '\t' + str(count) + '\n' + seq + '\n')
+    if seq.strip() != ref_amp_seq_dict[seqname].strip():
+      mutant_ampseq_count_dict[seqname]['mutant_count'] += count
+    else:
+      mutant_ampseq_count_dict[seqname]['wt_count'] += count
+    
     
   for fh in ofh_dict.values():
     fh.close()
   ifh.close()
+  
+  print(mutant_ampseq_count_dict)
+  
+  fh = open(sid + '_ampseq_mutants_vs_wt_counts.tsv', 'w')
+  
+  fh.write('amplicon_seq_id\twt_count\tmutant_count\n')
+
+  for seqname in mutant_ampseq_count_dict.keys():
+    fh.write(seqname + "\t" + str(mutant_ampseq_count_dict[seqname]['wt_count']) + "\t" + str(mutant_ampseq_count_dict[seqname]['mutant_count']) + "\n")
+  
+  fh.close()  
+
 
 def peform_msa():
-  my_fns = glob.glob('amp_seq_*.fa')
+  my_fns = glob.glob('*amp_seq_*.fa')
   
   for ifn in my_fns:
     print_log_style('Performing MSA for sequences in file "' + ifn + '"..')
@@ -157,7 +182,7 @@ def convertCountDict2Percents(myBaseCount_dict):
 
 
 def quantifyBasesAlongAmpliconSeq():
-  align_fns = glob.glob('amp_seq_*.align')
+  align_fns = glob.glob('*amp_seq_*.align')
   
   for align_fn in align_fns:
     print_log_style('Now quantifying bases in amplicon sequences for "' + align_fn + '"')
@@ -195,18 +220,30 @@ def quantifyBasesAlongAmpliconSeq():
     writeBaseCountDictToMatrixFile(myBaseCount_dict = myBaseCount_dict, my_ref_seq_base_coordinates = my_ref_seq_base_coordinates, out_fn = ofn)
     myBaseCount_dict = convertCountDict2Percents(myBaseCount_dict)
     ofn = ofn[ : -4] + '_percents.tsv'
-    writeBaseCountDictToMatrixFile(myBaseCount_dict = myBaseCount_dict, my_ref_seq_base_coordinates = my_ref_seq_base_coordinates, out_fn = ofn)
-    
-    
+    writeBaseCountDictToMatrixFile(myBaseCount_dict = myBaseCount_dict, my_ref_seq_base_coordinates = my_ref_seq_base_coordinates, out_fn = ofn)    
     
     
     ifh.close()
     
+  
+def processCmdLineArguments():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--sample_id", "-s", type=str, help="The sample id.", required = True)
+  parser.add_argument("--min_count", "-m", type=int, help="The minimum count for a sequence in a sample, to be taken into account.", required = True)
+  args = parser.parse_args()
+  
+  if args.min_count < 1:
+    print_log_style('Error: min_count must be > 0!')
+    sys.exit(1)
+    
+  return args
 
-min_count = 10
+cmdline_args = processCmdLineArguments()
+min_count = cmdline_args.min_count
+sid = cmdline_args.sample_id
 ref_amp_seq_dict = read_ref_ampseq()
 print(ref_amp_seq_dict)
 
-#produceFastaTableFrom_ampAbundTable(fn = 'amplicon_abundance_table_w_primer_ids.tsv', min_count = min_count, ref_amp_seq_dict = ref_amp_seq_dict)
-#peform_msa() 
+produceFastaTableFrom_ampAbundTable(fn = 'amplicon_abundance_table_w_primer_ids.tsv', min_count = min_count, ref_amp_seq_dict = ref_amp_seq_dict)
+peform_msa() 
 quantifyBasesAlongAmpliconSeq()
